@@ -1,0 +1,10 @@
+item_no,category,description,size_nps,schedule_rating,material_spec,end_type,quantity,unit,length_m,confidence,remarks
+1,pipe,Pipe run - main header,"12""",STD,CS,BW,1,M,8.5,0.6,"S.No.302, main header line"
+2,pipe,Pipe run - branch line,"2""",STD,CS,BW,4,M,12.0,0.6,"S.No.304, branch lines"
+3,pipe,Pipe run - small bore branch,"1.5""",STD,CS,BW,2,M,4.0,0.55,"S.No.309, small bore branch"
+4,fitting,Elbow 90 deg,"2""",STD,CS,BW,6,EA,0,0.7,Direction changes along isometric
+5,fitting,Equal Tee,"2""",STD,CS,BW,2,EA,0,0.65,Branch connection points
+6,valve,"Gate valve, inline","2""",150#,CS,FLG,1,EA,0,0.5,Isometric valve symbol
+7,weld,Field butt weld,-,-,-,BW,24,EA,0,0.7,Numbered circular weld markers on drawing
+8,support,Pipe support,-,-,-,-,5,EA,0,0.55,S.No.302-309 referenced in drawing
+9,equipment,Connected exchanger/vessel,-,-,-,-,2,EA,0,0.6,"Tags 42-E-01, 42-E-03"
