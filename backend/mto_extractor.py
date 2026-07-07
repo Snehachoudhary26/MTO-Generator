@@ -68,7 +68,7 @@ def extract_mto_gemini(file_bytes: bytes, mime_type: str) -> dict:
     import google.generativeai as genai
 
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    model = genai.GenerativeModel("gemini-flash-latest")
 
     response = model.generate_content(
         [MTO_SCHEMA_PROMPT, {"mime_type": mime_type, "data": file_bytes}]
