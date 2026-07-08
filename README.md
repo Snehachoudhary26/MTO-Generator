@@ -10,7 +10,7 @@
 </p>
 
 <h3 align="center">
-  🧾 Submitted for the <b>AI Intern Assessment</b> — <a href="https://assessmentpathnovo.vercel.app/" target="_blank">Path Novo</a>
+  🧾 Submitted for the <b>Full-Stack AI Engineer Intern Assessment</b> — <a href="https://assessmentpathnovo.vercel.app/" target="_blank">Pathnovo</a>
 </h3>
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=E8F0F8&height=4&section=header" width="100%"/>
@@ -21,7 +21,23 @@
 
 > **MTO Generator** takes a piping isometric drawing — PDF, PNG, or JPG — and turns it into a structured **Material Take-Off (MTO)**: pipe runs, fittings, valves, welds, supports, and equipment, each with size, spec, quantity, and confidence score, ready to export as CSV.
 
-Built against a real assessor-provided sample drawing (Loop-3, hand-marked isometric on grid paper) as the primary test case.
+Built and tested against the actual assessor-provided sample drawing ("3. Marked isometric (1).pdf" — Loop-3, hand-marked isometric on grid paper).
+
+---
+
+## 🎬 Demo
+
+**Upload screen** — selecting the sample isometric drawing:
+
+![Upload screen](./screenshots/upload-screen.png)
+
+**Results — summary dashboard + drawing preview:**
+
+![Results summary](./screenshots/results-summary.png)
+
+**Results — full MTO table with real Gemini-extracted data:**
+
+![Results table](./screenshots/results-table.png)
 
 ---
 
@@ -30,7 +46,7 @@ Built against a real assessor-provided sample drawing (Loop-3, hand-marked isome
 | Feature | Description |
 |---------|-------------|
 | 📤 **Drawing Upload** | PDF / PNG / JPG, up to 20MB, validated client + server side |
-| 🤖 **AI Extraction** | Gemini 1.5 Pro reads the drawing and returns structured MTO data |
+| 🤖 **AI Extraction** | Gemini (multimodal) reads the drawing and returns structured MTO data |
 | 🧪 **Mock Mode** | Fully functional without any API key — for grading without credentials |
 | 📊 **MTO Table** | Item no, category, size, schedule/rating, material, end type, qty, length, confidence, remarks |
 | 📈 **Summary Dashboard** | Auto-calculated totals: pipe length, welds, fittings, valves |
@@ -47,7 +63,7 @@ Built against a real assessor-provided sample drawing (Loop-3, hand-marked isome
 |-------|-----------|
 | **Frontend** | Next.js 14, TypeScript, Tailwind CSS |
 | **Backend** | FastAPI, Python |
-| **AI** | Google Gemini 1.5 Pro (multimodal) via `google-generativeai` |
+| **AI** | Google Gemini (multimodal) via `google-generativeai` |
 | **Data Export** | CSV streaming via FastAPI `StreamingResponse` |
 
 </div>
@@ -57,24 +73,30 @@ Built against a real assessor-provided sample drawing (Loop-3, hand-marked isome
 ## 📁 Project Structure
 
 ```
-MTO-Generator/
+AI-Intern-mto-assessment/
 │
-├── 📂 frontend/                 # Next.js app
-│   ├── 📂 app/
-│   │   ├── 🏠 page.tsx           # Upload UI + MTO table + summary + CSV export
-│   │   ├── 🧩 layout.tsx         # Root layout
-│   │   └── 🎨 globals.css        # Tailwind + theme tokens
+├── frontend/                 # Next.js app
+│   ├── app/
+│   │   ├── page.tsx           # Upload UI + MTO table + summary + CSV export
+│   │   ├── layout.tsx         # Root layout
+│   │   └── globals.css        # Tailwind + theme tokens
 │   ├── package.json
 │   ├── tailwind.config.js
 │   └── tsconfig.json
 │
-├── 📂 backend/                  # FastAPI server
-│   ├── 🚀 main.py                # API routes: /extract-mto, /extract-mto/csv, /api/health
-│   ├── 🧠 mto_extractor.py       # Gemini call + mock MTO generator + schema
+├── backend/                  # FastAPI server
+│   ├── main.py                # API routes: /extract-mto, /extract-mto/csv, /api/health
+│   ├── mto_extractor.py       # Gemini call + mock MTO generator + schema
+│   ├── test_main.py           # Backend test suite (6 tests)
 │   ├── requirements.txt
 │   └── .env.example
 │
-└── 📄 README.md
+├── samples/                  # Sample isometric drawing used for testing
+│   └── 3. Marked isometric (1).pdf
+│
+├── screenshots/              # Demo screenshots referenced in this README
+│
+└── README.md
 ```
 
 ---
@@ -92,30 +114,25 @@ MTO-Generator/
 
 ## 🏗️ How It Works
 
-<p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=rect&color=E8F0F8&height=3&section=header" width="60%"/>
-</p>
-
 1. 📤 User uploads a piping isometric drawing on the Next.js frontend.
 2. 🔀 The file is sent to FastAPI's `/extract-mto` endpoint.
-3. 🔑 **If `GEMINI_API_KEY` is set** → the drawing is sent directly to Gemini 1.5 Pro with a structured prompt requesting a specific JSON schema (pipe runs, fittings, valves, welds, supports, equipment).
+3. 🔑 **If `GEMINI_API_KEY` is set** → the drawing is sent directly to Gemini with a structured prompt requesting a specific JSON schema (pipe runs, fittings, valves, welds, supports, equipment).
 4. 🧪 **If no key is set** → a realistic mock MTO (based on the sample Loop-3 drawing) is returned instead, so the whole app is testable with zero credentials.
 5. 📊 The frontend renders: a summary dashboard, the full MTO table, a drawing preview, and a CSV export button.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Setup Guide (exact steps to run locally)
 
 ### Prerequisites
 - Node.js 18+
 - Python 3.10+
-- (Optional) A free [Google AI Studio](https://aistudio.google.com/) API key
+- (Optional) A free [Google AI Studio](https://aistudio.google.com/apikey) API key — the app runs fully without one, in mock mode
 
-### 1. Clone the repo
+### 1. Unzip / clone the project
 
 ```bash
-git clone https://github.com/Snehachoudhary26/MTO-Generator.git
-cd MTO-Generator
+cd AI-Intern-mto-assessment
 ```
 
 ### 2. Backend setup
@@ -125,11 +142,13 @@ cd backend
 python3 -m venv venv
 source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env          # optionally add your GEMINI_API_KEY
+cp .env.example .env          # optionally add your GEMINI_API_KEY inside .env
 uvicorn main:app --reload --port 8000
 ```
 
-### 3. Frontend setup
+Leave this running. Backend will be live at **http://127.0.0.1:8000**
+
+### 3. Frontend setup (in a new terminal tab)
 
 ```bash
 cd frontend
@@ -138,7 +157,15 @@ npm run dev
 ```
 
 ### 4. Open the app
-Visit **http://localhost:3000**
+
+Visit **http://localhost:3000** in your browser, upload a piping isometric drawing (a sample is provided in `/samples`), and click **Generate MTO**.
+
+### 5. (Optional) Run backend tests
+
+```bash
+cd backend
+pytest test_main.py -v
+```
 
 ---
 
@@ -146,26 +173,29 @@ Visit **http://localhost:3000**
 
 | Variable | Required? | Description |
 |----------|-----------|-------------|
-| `GEMINI_API_KEY` | No | If unset, the app runs fully in **mock mode**. |
+| `GEMINI_API_KEY` | No | If unset, the app runs fully in **mock mode**. Get a free key at [aistudio.google.com](https://aistudio.google.com/apikey). |
 
 ---
 
 ## 🧪 Assumptions & Limitations
 
-- Gemini's extraction accuracy depends on drawing clarity; hand-marked/scanned drawings (like the Loop-3 sample) may need manual review of low-confidence rows.
-- `length_m` values are visual estimates, not measured — flagged via the `confidence` field on each item.
-- Single-drawing uploads only (no batch processing yet).
-- PDF preview is currently a placeholder; only image files render inline.
+- Gemini's extraction accuracy depends on drawing clarity; hand-marked/scanned drawings (like the provided Loop-3 sample) may need manual review of low-confidence rows — this is why each line item includes a `confidence` score.
+- `length_m` values are visual estimates, not measured — flagged via the `confidence` field on each item, not treated as exact.
+- Single-drawing uploads only (no batch processing yet) — kept the scope focused given the assessment timeline.
+- PDF preview in the browser is currently a placeholder message rather than an inline render; only image files (PNG/JPG) show an inline preview. This was a deliberate scope trade-off to prioritize a working extraction pipeline over a PDF.js integration.
+- Results are stored in-memory on the backend (not persisted to a database), so CSV export only works for the most recently processed file per session.
+- The `google-generativeai` Python package used here is in its sunset period per Google's own deprecation notice; a future iteration would migrate to the newer `google-genai` package.
 
 ---
 
-## 🔮 Roadmap
+## 🚀 Future Improvements
 
-- [ ] 📚 Batch upload + multi-drawing MTO aggregation
-- [ ] 💾 Persistent storage (currently in-memory, resets on server restart)
-- [ ] 🔍 OCR pre-pass to improve accuracy on hand-annotated drawings
-- [ ] ✏️ Editable table for manual correction before export
-- [ ] 🖥️ PDF.js-based inline PDF preview
+- Batch upload + multi-drawing MTO aggregation
+- Persistent storage (database instead of in-memory)
+- OCR pre-pass to improve accuracy on hand-annotated drawings
+- Editable table for manual correction before export
+- PDF.js-based inline PDF preview
+- Migrate to the `google-genai` SDK
 
 ---
 
@@ -173,7 +203,7 @@ Visit **http://localhost:3000**
 
 <div align="center">
 
-**Built by Sneha Choudhary** for the AI Intern Assessment — Path Novo
+**Built by Sneha Choudhary** for the Full-Stack AI Engineer Intern Assessment — Pathnovo
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1E3A5F,50:3B6EA5,100:1E3A5F&height=120&section=footer&animation=fadeIn" width="100%"/>
